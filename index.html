@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#CDD0CE">
+<title>Илья Лосев — сайты, Telegram Mini Apps и боты под ключ</title>
+<meta name="description" content="Лендинги без конструкторов, Telegram Mini Apps, боты, реалтайм и AI-интеграции. Рабочие демо и цены на одной странице.">
+<style>
+/* theme.css — общая дизайн-система «Пульт» (Лосев) */
+:root{
+  --bg:#CDD0CE;          /* корпус прибора, холодный серый */
+  --panel:#BFC3C1;       /* утопленные панели */
+  --ink:#000;
+  --mute:#51565A;
+  --acc:#FF5B14;         /* сигнальный оранжевый */
+  --lcd:#B7C7A3;         /* экран */
+  --lcd-ink:#1A2412;
+  --ok:#1E8E4E;
+  --r:10px;
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  --sans:"Helvetica Neue",Helvetica,Arial,sans-serif;
+  --gap:clamp(12px,3.5vw,28px);
+  --maxw:1080px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font:400 16px/1.5 var(--sans);min-height:100vh;
+  padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+a{color:inherit}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 var(--gap)}
+.mono{font-family:var(--mono)}
+h1,h2{font-weight:700;letter-spacing:-.035em;line-height:.98}
+h1{font-size:clamp(34px,8.4vw,84px)}
+h2{font-size:clamp(24px,4.6vw,40px)}
+.lead{font-size:clamp(16px,2.4vw,20px);max-width:52ch;color:var(--mute)}
+.small{font:12px/1.4 var(--mono);color:var(--mute)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.6em;min-height:52px;padding:0 24px;
+  border-radius:var(--r);border:2px solid var(--ink);font-weight:700;text-decoration:none;
+  background:var(--acc);box-shadow:0 5px 0 var(--ink);transition:transform .08s,box-shadow .08s}
+.btn:active{transform:translateY(4px);box-shadow:0 1px 0 var(--ink)}
+.btn.ghost{background:var(--bg)}
+.chip{display:inline-block;padding:3px 9px;border:1.5px solid var(--ink);border-radius:99px;font:12px/1.5 var(--mono)}
+.lcd{background:var(--lcd);color:var(--lcd-ink);font-family:var(--mono);border-radius:6px;
+  box-shadow:inset 0 3px 0 rgba(0,0,0,.28),inset 0 0 0 2px rgba(0,0,0,.55);padding:14px 16px}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--ok);vertical-align:middle}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
+
+/* ===== страница ===== */
+header.top{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 0;border-bottom:2px solid var(--ink)}
+header.top b{font-size:15px;letter-spacing:-.01em}
+.hero{display:grid;gap:var(--gap);padding:clamp(22px,5vw,56px) 0;grid-template-columns:1fr;align-items:start}
+.hero .txt{display:grid;gap:18px}
+.cta{display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin-top:6px}
+
+/* прибор */
+.device{background:var(--panel);border:2px solid var(--ink);border-radius:18px;padding:14px;display:grid;gap:14px;box-shadow:0 8px 0 var(--ink)}
+.screen{min-height:168px;display:grid;gap:8px;align-content:start}
+.screen .row{display:flex;justify-content:space-between;gap:8px;font-size:12px}
+.screen .name{font-size:clamp(20px,4.6vw,26px);font-weight:700;letter-spacing:-.02em;line-height:1.1}
+.screen .desc{font-size:14px;line-height:1.4}
+.screen .cur{display:inline-block;width:.55em;height:1em;background:var(--lcd-ink);vertical-align:-.12em;animation:bl 1s steps(1) infinite}
+@keyframes bl{50%{opacity:0}}
+.pads{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.pad{position:relative;aspect-ratio:1.25;border:2px solid var(--ink);border-radius:12px;background:#E6E8E6;
+  box-shadow:0 7px 0 var(--ink);text-align:left;padding:12px;display:flex;flex-direction:column;justify-content:space-between;
+  font-weight:700;font-size:clamp(14px,3.6vw,18px);line-height:1.15;transition:transform .07s,box-shadow .07s,background .1s;touch-action:manipulation}
+.pad i{font:12px var(--mono);font-style:normal;color:var(--mute)}
+.pad:active{transform:translateY(6px);box-shadow:0 1px 0 var(--ink)}
+.pad[aria-pressed="true"]{background:var(--acc);transform:translateY(3px);box-shadow:0 4px 0 var(--ink)}
+.pad[aria-pressed="true"] i{color:var(--ink)}
+.pad .launch{position:absolute;right:11px;top:9px;font:700 18px/1 var(--mono);opacity:0;transform:translate(-3px,3px);transition:opacity .12s,transform .12s}
+.pad[aria-pressed="true"] .launch{opacity:1;transform:none}
+.pad[aria-pressed="true"]:active{transform:translateY(6px);box-shadow:0 1px 0 var(--ink)}
+.dev-bar{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.snd{font:12px var(--mono);border:2px solid var(--ink);border-radius:8px;min-height:44px;padding:0 12px;background:var(--bg)}
+
+/* микшер цен */
+.mix{padding:clamp(28px,6vw,64px) 0;border-top:2px solid var(--ink);display:grid;gap:var(--gap)}
+.mix-grid{display:grid;gap:var(--gap);grid-template-columns:1fr}
+.chan{display:grid;gap:0;border:2px solid var(--ink);border-radius:14px;overflow:hidden;background:var(--panel)}
+.sw{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;width:100%;text-align:left;padding:14px 16px;min-height:64px}
+.sw+.sw{border-top:2px solid var(--ink)}
+.sw b{display:block;font-size:16px;line-height:1.25}
+.sw .small{display:block;margin-top:2px}
+.trk{width:54px;height:30px;border:2px solid var(--ink);border-radius:99px;background:var(--bg);position:relative;transition:background .12s}
+.trk::after{content:"";position:absolute;top:2px;left:2px;width:22px;height:22px;border-radius:50%;background:var(--ink);transition:transform .12s}
+.sw[aria-checked="true"] .trk{background:var(--acc)}
+.sw[aria-checked="true"] .trk::after{transform:translateX(24px)}
+.read{display:grid;gap:14px;align-content:start}
+.read .big{font-size:clamp(30px,7vw,48px);font-weight:700;letter-spacing:-.03em;line-height:1}
+.read .lcd{display:grid;gap:10px;padding:18px}
+.num{font-variant-numeric:tabular-nums}
+
+.stack{border-top:2px solid var(--ink);padding:22px 0;display:flex;flex-wrap:wrap;gap:8px}
+footer{border-top:2px solid var(--ink);padding:26px 0 34px;display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;align-items:center}
+
+@media(min-width:860px){
+  .hero{grid-template-columns:1.05fr .95fr;gap:48px}
+  .mix-grid{grid-template-columns:1.2fr .8fr;align-items:start}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <b>Илья Лосев</b>
+    <span class="small"><span class="dot"></span> беру заказы</span>
+  </header>
+
+  <section class="hero">
+    <div class="txt">
+      <h1>Сайты, мини-аппы и боты под ключ.</h1>
+      <p class="lead">Один человек, чистый код без конструкторов. Лендинги, Telegram Mini Apps, боты, реалтайм и AI-обработка фото. Справа рабочие демо: нажмите на любой пад.</p>
+      <div class="cta">
+        <a class="btn" href="https://t.me/asano2k" target="_blank" rel="noopener">Написать в Telegram</a>
+        <span class="small">отвечаю обычно в течение часа</span>
+      </div>
+    </div>
+
+    <div class="device" role="group" aria-label="Выбор демо-проекта">
+      <div class="lcd screen" aria-live="polite">
+        <div class="row"><span id="s-slot"></span><span id="s-term"></span></div>
+        <div class="name" id="s-name"></div>
+        <div class="desc" id="s-desc"></div>
+        <div class="row"><span id="s-stack"></span><span class="cur"></span></div>
+      </div>
+      <div class="pads" id="pads"></div>
+      <div class="dev-bar">
+        <button class="snd" id="snd" type="button" aria-pressed="false">звук: выкл</button>
+        <a class="btn" id="open" href="#">Открыть демо</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="mix" aria-labelledby="mx">
+    <h2 id="mx">Соберите задачу и получите вилку по цене и срокам</h2>
+    <div class="mix-grid">
+      <div class="chan" id="chan"></div>
+      <div class="read">
+        <div class="lcd">
+          <span class="small" style="color:var(--lcd-ink)">цена договорная, это нижняя граница</span>
+          <div class="big num" id="r-price"></div>
+          <div class="num" id="r-days"></div>
+          <div class="small" style="color:var(--lcd-ink)" id="r-list"></div>
+        </div>
+        <a class="btn" id="r-tg" href="https://t.me/asano2k" target="_blank" rel="noopener">Обсудить эту сборку</a>
+        <p class="small">Цена договорная: напишите задачу и бюджет, соберу решение под него.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="stack" aria-label="Стек">
+    <span class="chip">HTML</span><span class="chip">CSS</span><span class="chip">JavaScript</span>
+    <span class="chip">Telegram Bot API</span><span class="chip">Telegram WebApp</span>
+    <span class="chip">WebSocket</span><span class="chip">Canvas</span><span class="chip">AI API</span>
+  </div>
+
+  <footer>
+    <span class="small">Илья Лосев · Telegram @asano2k</span>
+    <a class="btn ghost" href="https://t.me/asano2k" target="_blank" rel="noopener">Написать</a>
+  </footer>
+</div>
+
+<script>
+/* ===== Данные: правьте здесь ===== */
+var PROJECTS = [
+  {name:'Мини-апп магазина', href:'https://asano1337.github.io/tma-shop/', term:'от 10 дней',
+   desc:'Каталог, корзина, кешбэк и оформление заказа внутри Telegram. В демо он в рамке телефона.', stack:'Telegram WebApp'},
+  {name:'Живая викторина', href:'https://asano1337.github.io/lesson-v2/', term:'от 8 дней',
+   desc:'Пульт ведущего и экран участника: вопросы, таймер, статистика ответов в реальном времени.', stack:'Realtime · JS'},
+  {name:'Запись на услуги', href:'https://asano1337.github.io/booking/', term:'от 8 дней',
+   desc:'Онлайн-запись для барбершопа или салона: услуги, мастер, свободные окна, оплата, чаевые, QR-билет и календарь.', stack:'Telegram WebApp · Payments'},
+  {name:'Бот и CRM-воронка', href:'https://asano1337.github.io/smart-bot/', term:'от 7 дней',
+   desc:'Нажимаете кнопки в чате бота и видите, как меняются статус лида, конверсия и окупаемость.', stack:'Bot API · Dashboard'}
+];
+var SERVICES = [  /* p — цена от, ₽; d — срок, дней */
+  {n:'Лендинг без конструктора', p:5000, d:5},
+  {n:'Telegram Mini App', p:12000, d:10},
+  {n:'Telegram-бот и воронка', p:7000, d:7},
+  {n:'AI: обработка фото, генерация', p:8000, d:7},
+  {n:'Реалтайм: комнаты, таймеры', p:10000, d:8}
+];
+
+/* ===== Пульт ===== */
+var $ = function(id){return document.getElementById(id)};
+var pads = $('pads'), cur = 0, soundOn = false, ac = null;
+var NOTES = [261.63, 329.63, 392.0, 523.25];
+
+PROJECTS.forEach(function(p, i){
+  var b = document.createElement('button');
+  b.type = 'button'; b.className = 'pad'; b.setAttribute('aria-pressed', 'false');
+  b.innerHTML = '<i>' + (i + 1) + '</i><span>' + p.name + '</span><span class="launch" aria-hidden="true">↗</span>';
+  b.addEventListener('click', function(){
+    if (cur === i) { window.location.href = p.href; return; }
+    select(i, true);
+  });
+  pads.appendChild(b);
+});
+
+function beep(i){
+  if (!soundOn) return;
+  try {
+    ac = ac || new (window.AudioContext || window.webkitAudioContext)();
+    var o = ac.createOscillator(), g = ac.createGain(), t = ac.currentTime;
+    o.type = 'square'; o.frequency.value = NOTES[i];
+    g.gain.setValueAtTime(.0001, t); g.gain.exponentialRampToValueAtTime(.12, t + .005);
+    g.gain.exponentialRampToValueAtTime(.0001, t + .14);
+    o.connect(g); g.connect(ac.destination); o.start(t); o.stop(t + .16);
+  } catch (e) {}
+}
+function select(i, sound){
+  cur = i; var p = PROJECTS[i];
+  [].forEach.call(pads.children, function(b, k){ b.setAttribute('aria-pressed', k === i ? 'true' : 'false'); });
+  $('s-slot').textContent = 'демо ' + (i + 1) + '/' + PROJECTS.length;
+  $('s-term').textContent = p.term;
+  $('s-name').textContent = p.name;
+  $('s-desc').textContent = p.desc;
+  $('s-stack').textContent = p.stack;
+  $('open').href = p.href;
+  if (sound) beep(i);
+  if (sound && navigator.vibrate) navigator.vibrate(8);
+  try { var tg = window.Telegram && Telegram.WebApp && Telegram.WebApp.HapticFeedback; if (sound && tg) tg.impactOccurred('light'); } catch (e) {}
+}
+$('snd').addEventListener('click', function(){
+  soundOn = !soundOn; this.setAttribute('aria-pressed', soundOn);
+  this.textContent = 'звук: ' + (soundOn ? 'вкл' : 'выкл');
+  if (soundOn) beep(cur);
+});
+document.addEventListener('keydown', function(e){
+  if (e.ctrlKey || e.metaKey || e.altKey) return;
+  var n = parseInt(e.key, 10);
+  if (n >= 1 && n <= PROJECTS.length) select(n - 1, true);
+});
+select(0, false);
+
+/* ===== Микшер ===== */
+var on = SERVICES.map(function(_, i){ return i === 0; });
+var chan = $('chan');
+function fmt(n){ return n.toLocaleString('ru-RU').replace(/\u00a0/g, ' '); }
+SERVICES.forEach(function(s, i){
+  var b = document.createElement('button');
+  b.type = 'button'; b.className = 'sw'; b.setAttribute('role', 'switch');
+  b.setAttribute('aria-checked', on[i]);
+  b.innerHTML = '<span><b>' + s.n + '</b><span class="small">от ' + fmt(s.p) + ' ₽, договорная · ' + s.d + ' дн</span></span><span class="trk"></span>';
+  b.addEventListener('click', function(){
+    on[i] = !on[i]; b.setAttribute('aria-checked', on[i]); calc();
+    var tg = window.Telegram && Telegram.WebApp && Telegram.WebApp.HapticFeedback;
+    try { if (tg) tg.selectionChanged(); else if (navigator.vibrate) navigator.vibrate(6); } catch (e) {}
+  });
+  chan.appendChild(b);
+});
+function calc(){
+  var sum = 0, dsum = 0, dmax = 0, names = [];
+  SERVICES.forEach(function(s, i){ if (on[i]){ sum += s.p; dsum += s.d; dmax = Math.max(dmax, s.d); names.push(s.n); } });
+  if (!names.length){
+    $('r-price').textContent = '— ₽'; $('r-days').textContent = 'Выберите хотя бы один модуль';
+    $('r-list').textContent = ''; $('r-tg').textContent = 'Описать задачу'; $('r-tg').href = 'https://t.me/asano2k?text=' + encodeURIComponent('Привет! Хочу обсудить разработку проекта.'); return;
+  }
+  var days = dmax + Math.round((dsum - dmax) * 0.5);
+  $('r-price').textContent = 'от ' + fmt(sum) + ' ₽';
+  $('r-days').textContent = 'срок от ' + days + ' дн';
+  $('r-list').textContent = names.length + ' из ' + SERVICES.length + ' модулей';
+  $('r-tg').textContent = 'Обсудить эту сборку';
+  var message = 'Привет! Собрал в калькуляторе: ' + names.join(', ') + ' (от ' + fmt(sum) + ' ₽, ~' + days + ' дн). Обсудим задачу?';
+  $('r-tg').href = 'https://t.me/asano2k?text=' + encodeURIComponent(message);
+}
+calc();
+</script>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script>
+try { if (window.Telegram && Telegram.WebApp) { Telegram.WebApp.ready();
